@@ -11,7 +11,7 @@
     <target name="checkstyle" depends="init">
             <exec dir="${basedir}" executable="phpcs" output="${basedir}/build/logs/checkstyle.xml" failonerror="false">
              <arg line="--standard=Elgg"/>
-             <arg line="--report=summary"/>
+             <arg line="--report=checkstyle"/>
              <arg line="source"/>
         </exec>
 
