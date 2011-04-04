@@ -8,10 +8,13 @@
         <delete dir="${basedir}/build"/>
     </target>
 
-    <target name="checkstyle">
-        <exec dir="${basedir}" executable="phpcs" output="${basedir}/build/logs/checkstyle.xml" failonerror="false">
-             <arg line="--report=checkstyle"/>
+    <target name="checkstyle" depends="init">
+            <exec dir="${basedir}" executable="phpcs" output="${basedir}/build/logs/checkstyle.xml" failonerror="false">
+             <arg line="--standard=Elgg"/>
+             <arg line="--report=summary"/>
+             <arg line="source"/>
         </exec>
+
     </target>
 </project>
 
