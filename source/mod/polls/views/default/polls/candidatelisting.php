@@ -108,11 +108,11 @@
 				if ($description)
 				{
 					$info .= '<p>';
-					$info .= '<a class="collapsibleboxlink">';
+					$info .= '<a class="elgg-toggler" href="#polls_candidate_' . $candidate->getGUID() . '">';
 					$info .= elgg_echo('polls:candidate:moreinfo');
 					$info .= '</a>';
 					$info .= '</p>';
-					$info .= '<div class="collapsible_box">';
+					$info .= '<div class="hidden" id="polls_candidate_' . $candidate->getGUID() . '">';
 					$info .= $description;
 					$info .= '</div>';
 				}
