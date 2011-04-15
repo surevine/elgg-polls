@@ -105,9 +105,20 @@
 		{
 			// Check we're not making it unmoderated while there are still
 			// proposed candidates
-			$count = get_entities_from_metadata_multi(
-									array("parent_guid" => $poll->getGUID(), "state" => 'proposed'),
-									"object", "poll_candidate", 0, 0, 0, "", 0, TRUE);
+
+			$metadata = array(
+				'parent_guid' => $poll->getGUID(),
+				'state' => 'proposed'
+			);
+
+			$options = array(
+				'types' => 'object',
+				'subtypes' => 'poll_candidate',
+				'count' => TRUE,
+				'metadata_name_value_pairs' => $metadata
+			);
+
+			$count = elgg_get_entities_from_metadata($options);
 
 			if ($input['moderated'] == "no" && $count > 0)
 			{

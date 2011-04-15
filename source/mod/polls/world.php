@@ -38,7 +38,22 @@
 	
 
 	// Get objects
-	$objects = list_entities("object", "poll", 0, $limit, FALSE);
+
+    $options = array(
+        'types' => 'object',
+		'subtypes' => 'poll',
+		'limit' => $limit,
+		'full_view' => FALSE,
+		'list_type_toggle' => FALSE,
+		'pagination' => TRUE
+	);
+
+	if ($offset = sanitise_int(get_input('offset', null))) {
+		$options['offset'] = $offset;
+	}
+
+	$objects = elgg_list_entities($options);
+
 
 	$body = elgg_view_title($title);
 	$body .= $objects;

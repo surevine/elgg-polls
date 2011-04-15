@@ -25,12 +25,12 @@
 		}
 		else
 		{
-			add_menu(elgg_echo('polls'), $CONFIG->wwwroot . "mod/polls/world.php");
+			add_menu(elgg_echo('polls'), $CONFIG->wwwroot . "pg/polls/world");
 		}
 		
 		// Extend hover-over menu	
-		extend_view('profile/menu/links','polls/menu');
-		extend_view('metatags', 'polls/metatags');
+		elgg_extend_view('profile/menu/links','polls/menu');
+		elgg_extend_view('metatags', 'polls/metatags');
 		
 		// Register a page handler, so we can have nice URLs
 		register_page_handler('polls', 'polls_page_handler');
@@ -50,10 +50,10 @@
 		register_action("polls/bulkupload", FALSE, $CONFIG->pluginspath . "polls/actions/bulkupload.php");
 		
 		// Extend some views
-		extend_view('css','polls/css');
-		extend_view('js/initialise_elgg','polls/js');
-		extend_view('groups/menu/links', 'polls/menu'); // Add to groups context
-		extend_view('groups/right_column', 'polls/groupprofile_polls'); // Add to groups context
+		elgg_extend_view('css','polls/css');
+		elgg_extend_view('js/initialise_elgg','polls/js');
+		elgg_extend_view('groups/menu/links', 'polls/menu'); // Add to groups context
+		elgg_extend_view('groups/right_column', 'polls/groupprofile_polls'); // Add to groups context
 		
 		// Register entity type
 		register_entity_type('object', 'poll_candidate');
@@ -231,7 +231,7 @@
 			add_submenu_item(elgg_echo("polls:mine"), $CONFIG->url . "pg/polls/owned/" .
 								$_SESSION['user']->username, 'pollslinksgeneral');
 
-			add_submenu_item(elgg_echo('polls:all'), $CONFIG->wwwroot."mod/polls/world.php",
+			add_submenu_item(elgg_echo('polls:all'), $CONFIG->url . "pg/polls/world",
 								'pollslinksgeneral');
 		}
 	}

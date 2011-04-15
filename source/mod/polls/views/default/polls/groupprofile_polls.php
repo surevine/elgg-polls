@@ -13,7 +13,16 @@
 
 <?php
 
-	$objects = list_entities("object", "poll", page_owner(), 5, FALSE);
+    $options = array(
+        'types' => 'object',
+		'subtypes' => 'poll',
+		'container_guids' => page_owner(),
+		'limit' => 5,
+		'full_view' => FALSE
+	);
+
+	$objects = elgg_list_entities($options);
+
 	echo $objects;
 	
 ?>

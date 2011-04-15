@@ -90,9 +90,21 @@
 	function display_tab($poll, $state, $link_name, $link_text)
 	{
 		global $CONFIG;
-		$count = (int) get_entities_from_metadata_multi(
-								array("parent_guid" => $poll->getGUID(), "state" => $link_name),
-								"object", "poll_candidate", 0, 0, 0, "", 0, TRUE);
+
+		$metadata = array(
+			'parent_guid' => $poll->getGUID(),
+			'state' => $link_name
+		);
+
+		$options = array(
+			'types' => 'object',
+			'subtypes' => 'poll_candidate',
+			'count' => TRUE,
+			'metadata_name_value_pairs' => $metadata
+		);
+
+		$count = elgg_get_entities_from_metadata($options);
+
 		$link_text .= " (" . $count . ")";
 
 		// don't make it a link if we're already on that page

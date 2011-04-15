@@ -40,7 +40,17 @@
 
 	
 	// Get objects
-	$objects = list_entities("object", "poll", page_owner(), $limit, FALSE);
+
+    $options = array(
+        'types' => 'object',
+		'subtypes' => 'poll',
+		'container_guids' => page_owner(),
+		'limit' => $limit,
+		'full_view' => FALSE
+	);
+
+	$objects = elgg_list_entities($options);
+
 	
 	$body = elgg_view_title($title);
 	$body .= elgg_view("polls/welcome");

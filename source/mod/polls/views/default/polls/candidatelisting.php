@@ -124,8 +124,11 @@
 	if (get_context() == "polls_manage")
 	{
 		$checkbox = '<div class="polls_manage_checkbox">';
-		$checkbox .= elgg_view('input/checkboxes', array('internalname' => 'manage_guid[]',
-								'options' => array('' => $candidate->getGUID())));
+		$checkbox .= elgg_view('input/checkboxes', array(
+								'name' => 'manage_guid[]',
+								'default' => FALSE,
+								'options' => array('' => $candidate->getGUID())
+								));
 		$checkbox .= '</div>';
 
 		echo elgg_view_listing($checkbox . $icon, $info);

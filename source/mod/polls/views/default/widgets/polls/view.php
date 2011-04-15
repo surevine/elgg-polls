@@ -19,7 +19,15 @@
 
 	$num_display = (int) $vars['entity']->polls_num;
 
-	$polls = list_entities("object", "poll", page_owner(), $num_display, FALSE);
+    $options = array(
+        'types' => 'object',
+		'subtypes' => 'poll',
+		'container_guids' => page_owner(),
+		'limit' => $num_display,
+		'full_view' => FALSE
+	);
+
+	$polls = elgg_list_entities($options);
 
 	echo "<div id=\"polls_widget\">" . $polls . "</div>";
 
