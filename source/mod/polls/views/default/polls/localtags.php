@@ -28,13 +28,12 @@
 			$taglist = array($taglist);
 		}
 
+		echo '<span>';
+		echo elgg_view_icon('tag');
+		echo '<ul class="elgg-tags">';
+		
 		foreach ($taglist as $tag)
 		{
-			if (!empty($tagstr))
-			{
-				$tagstr .= ", ";
-			}
-
 			if (is_string($tag))
 			{
 				if (in_array($tag, $current_tags))
@@ -52,12 +51,14 @@
 						$tags_string = $current_tags_string . ',' . $tag;
 					}
 					
-					$tagstr .= '<a rel="tag" href="' . $url . '?tag=' . rawurlencode($tags_string) . '">' . 
-						htmlentities($tag, ENT_QUOTES, 'UTF-8') . '</a>';
+					$tagstr .= '<li><a rel="tag" href="' . $url . '?tag=' . rawurlencode($tags_string) . '">' . 
+						htmlentities($tag, ENT_QUOTES, 'UTF-8') . '</a></li>';
 				}
 									
 			}
 		}
 
 		echo $tagstr;
+		echo '</ul>';
+		echo '</span>';
 	}

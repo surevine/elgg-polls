@@ -25,9 +25,7 @@
 
 	$info = view_voting_box($candidate);
 
-	$info .= '<p class="candidate_title">';
-	$info .= "<b><a href=\"" . $candidate->getUrl() . "\">" . $candidate->title . "</a></b>";
-	$info .= '</p>';
+	$info .= "<h3><a href=\"" . $candidate->getUrl() . "\">" . $candidate->title . "</a></h3>";
 
 	
 	$latest = $candidate->getAnnotations('poll_candidate', 1, 0, 'desc');
@@ -40,10 +38,10 @@
 		$owner_guid = $latest->owner_guid;
 		$owner = get_entity($owner_guid);
 			
-		$info .= "<p class=\"owner_timestamp\">";
+		$info .= "<div class=\"elgg-subtext\">";
 		$info .= sprintf(elgg_echo("polls:strapline"), friendly_time($time_updated),
 						"<a href=\"" . $owner->getURL() . "\">" . $owner->name ."</a>");
-		$info .= "</p>";
+		$info .= "</div>";
 	}
 
 	// only show comments, tags and more info if in polls context (so they don't
@@ -53,7 +51,7 @@
 
 	if ($context == "polls" || $context == "polls_manage")
 	{
-		$info .= '<p class="candidate_tagline">';
+		$info .= '<div class="candidate_tagline">';
 
 		$num_comments = elgg_count_comments($candidate);
 
@@ -79,16 +77,9 @@
 		$url_split = explode('?', $_SERVER['REQUEST_URI']);
 		$url = $url_split[0];
 
-		$tag_string = elgg_view('polls/localtags', array('baseurl' => $url, 'tags' => $candidate->tags));
+		$info .= elgg_view('polls/localtags', array('baseurl' => $url, 'tags' => $candidate->tags));
 
-		if ($tag_string)
-		{
-			$info .= '<span class="tags">';
-			$info .= $tag_string;
-			$info .= '</span>';
-		}
-
-		$info .= "</p>";
+		$info .= "</div>";
 
 
 
@@ -107,12 +98,12 @@
 
 				if ($description)
 				{
-					$info .= '<p>';
+					$info .= '<p class="more-info-link">';
 					$info .= '<a class="elgg-toggler" href="#polls_candidate_' . $candidate->getGUID() . '">';
 					$info .= elgg_echo('polls:candidate:moreinfo');
 					$info .= '</a>';
 					$info .= '</p>';
-					$info .= '<div class="hidden" id="polls_candidate_' . $candidate->getGUID() . '">';
+					$info .= '<div class="hidden more-info-data" id="polls_candidate_' . $candidate->getGUID() . '">';
 					$info .= $description;
 					$info .= '</div>';
 				}

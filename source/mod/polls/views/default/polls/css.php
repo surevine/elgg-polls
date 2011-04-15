@@ -99,7 +99,7 @@
 	border: none;
 }
 
-.search_listing .search_listing_info .owner_timestamp
+.search_listing .elgg-body .owner_timestamp
 {
 	float: none;
 }
@@ -195,12 +195,12 @@
 	float:left;
 }
 
-.polls_manage .search_listing .search_listing_info
+.polls_manage .search_listing .elgg-body
 {
 	margin-left: 85px;
 }
 
-#polls_poll .search_listing_info .candidate_title
+#polls_poll .elgg-body .candidate_title
 {
 	padding: 0;
 }
@@ -210,48 +210,21 @@
 	padding: 5px 0 0 0;
 }
 
-#polls_poll .search_listing_info .owner_timestamp
+#polls_poll .elgg-body .owner_timestamp
 {
 	padding: 0;
 }
 
-#polls_poll .search_listing_info .candidate_tagline
+#polls_poll .elgg-body .candidate_tagline
 {
 	padding: 2px 0 0 0;
 }
 
-#polls_poll .tags
-{
-	padding: 0 0 0 16px;
-	margin: 10px 0 4px 0;
-	background: transparent url(<?php echo $vars['url']; ?>_graphics/icon_tag.gif) no-repeat scroll left 2px;
-}
-
-#polls_candidate .tags
-{
-	padding: 0 0 0 16px;
-	margin: 10px 0 4px 0;
-	background: transparent url(<?php echo $vars['url']; ?>mod/polls/images/icon_tag_local.gif) no-repeat scroll left 2px;
-}
-
-#polls_poll .search_listing_info .tags
-{
-	padding: 0 0 1px 16px;
-	margin: 10px 0 4px 0;
-	background: transparent url(<?php echo $vars['url']; ?>mod/polls/images/icon_tag_local.gif) no-repeat scroll left 1px;
-	font-size: 86%;
-}
-
-#polls_poll .search_listing_info .comments
+#polls_poll .elgg-body .comments
 {
 	padding: 0 12px 1px 16px;
 	margin: 10px 0 4px 0;
 	background: transparent url(<?php echo $vars['url']; ?>mod/polls/images/icon_comment.gif) no-repeat scroll left 1px;
-	font-size: 86%;
-}
-
-#polls_poll .search_listing_info .collapsibleboxlink
-{
 	font-size: 86%;
 }
 
@@ -310,7 +283,16 @@
 	float: right;
 }
 
-.polls_vote_area
+#polls_poll .more-info-link {
+	margin: 1em 0 0 0;
+	font-size: 86%;
+}
+
+#polls_poll .more-info-data {
+	padding: 1em 0 0 0;
+}
+
+.voting-box
 {
 	float: right;
 	margin-left: 10px;
