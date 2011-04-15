@@ -20,11 +20,11 @@
 
 	if ($item->container_guid)
 	{
-		set_page_owner($item->container_guid);
+		elgg_set_page_owner_guid($item->container_guid);
 	}
 	else
 	{
-		set_page_owner($item->owner_guid);
+		elgg_set_page_owner_guid($item->owner_guid);
 	}
 
 	$limit = (int)get_input('limit', 20);
@@ -49,9 +49,16 @@
 	)));
 	
 	$area2 .= elgg_view_title($title);
-	
-	$area2 .= list_annotations($item_guid, $item->getSubtype(), $limit, FALSE);
+
+	$options = array(
+		'guid' => $item_guid,
+		'limit' => $limit,
+		'annotation_name' => $item->getSubtype(),
+		'order_by' => "n_table.time_created DESC"
+	);
+
+	$area2 .= elgg_list_annotations($options);
 	
 	$body = elgg_view_layout('two_column_left_sidebar', '', $area2, "");
-	
-	page_draw($title, $body);
+
+	echo elgg_view_page($title, $body, 'default');

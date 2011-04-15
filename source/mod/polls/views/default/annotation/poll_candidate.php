@@ -24,7 +24,7 @@
 	$owner = get_entity($owner_guid);
 			
 	$rev = sprintf(elgg_echo('polls:revision'), 
-		friendly_time($annotation->time_created),
+		elgg_view_friendly_time($annotation->time_created),
 		
 		"<a href=\"" . $owner->getURL() . "\">" . $owner->name ."</a>"
 	);
@@ -37,4 +37,4 @@
 <div>$rev</div>
 END;
 
-	echo elgg_view_listing($icon, $info);
+	echo elgg_view_image_block($icon, $info);
