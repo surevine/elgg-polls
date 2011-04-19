@@ -280,7 +280,10 @@
 			'polls:river:vote:category:stars:group:one' => "%s voted 1 for %s star within %s in the %s poll in %s",
 
 			'poll:river:annotate' => 'a comment on this poll',
-			'poll_candidate:river:annotate' => 'a comment on this poll candidate', 
+			'poll_candidate:river:annotate' => 'a comment on this poll candidate',
+	
+			'river:commented:object:poll_candidate' => 'poll candidate',
+			'river:commented:object:poll' => 'poll',
 	);
 					
 	add_translation("en",$english);
