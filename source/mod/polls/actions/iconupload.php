@@ -18,7 +18,7 @@
 
 	set_context('polls');
 
-	$item_guid = get_input('item_guid');
+	$item_guid = get_input('guid');
 	$item = get_entity($item_guid);
 
 	$topbar = get_resized_image_from_uploaded_file('candidateicon', 16, 16, TRUE);

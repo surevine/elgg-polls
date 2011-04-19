@@ -15,13 +15,7 @@
 
 	$candidate = $vars['entity'];
 
-	$icon = elgg_view(
-			"graphics/icon", array	(
-										'entity' => $candidate,
-										'size' => 'small',
-									)
-		);
-
+	$icon = elgg_view_entity_icon($candidate, 'small');
 
 	$info = view_voting_box($candidate);
 
@@ -122,10 +116,10 @@
 								));
 		$checkbox .= '</div>';
 
-		echo elgg_view_listing($checkbox . $icon, $info);
+		echo elgg_view_image_block($checkbox . $icon, $info);
 	}
 	else
 	{
-		echo elgg_view_listing($icon, $info);
+		echo elgg_view_image_block($icon, $info);
 	}
 

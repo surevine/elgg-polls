@@ -20,15 +20,15 @@
 	// Get the current poll's owner
 	if ($container = $item->container_guid)
 	{
-		set_page_owner($container);
+		elgg_set_page_owner_guid($container);
 	}
 
-	$page_owner = page_owner_entity();
+	$page_owner = elgg_get_page_owner_entity();
 
 	if ($page_owner === FALSE || is_null($page_owner))
 	{
 		$page_owner = $_SESSION['user'];
-		set_page_owner($page_owner->getGUID());
+		elgg_set_page_owner_guid($page_owner->getGUID());
 	}
 
 	// set title
@@ -41,7 +41,8 @@
 
 	if (($item) && $item->canEdit() && $item->getSubtype() == 'poll_candidate')
 	{
-		$area2 .= elgg_view("forms/polls/editicon");
+		$area2 .= elgg_view("polls/candidateicon/upload", array('entity' => $item));
+		$area2 .= elgg_view("polls/candidateicon/crop", array('entity' => $item));
 	}
 	else
 	{
@@ -53,5 +54,5 @@
 	$body = elgg_view_layout("two_column_left_sidebar", '', $area2);
 		
 	// Draw the page
-	page_draw(elgg_echo("polls:editicon"),$body);
+	echo elgg_view_page(elgg_echo("polls:editicon"),$body);
 

@@ -16,14 +16,14 @@
 
 	set_context('polls');
 
-	$item_guid = get_input('item_guid');
+	$item_guid = get_input('guid');
 	$item = get_entity($item_guid);
 
 
-	$x1 = (int) get_input('x_1',0);
-	$y1 = (int) get_input('y_1',0);
-	$x2 = (int) get_input('x_2',0);
-	$y2 = (int) get_input('y_2',0);
+	$x1 = (int) get_input('x1',0);
+	$y1 = (int) get_input('y1',0);
+	$x2 = (int) get_input('x2',0);
+	$y2 = (int) get_input('y2',0);
 	
 	$filehandler = new ElggFile();
 	$filehandler->owner_guid = $item->getOwner();
@@ -60,10 +60,10 @@
 		$filehandler->write($topbar);
 		$filehandler->close();
 		
-		$user->x1 = $x1;
-		$user->x2 = $x2;
-		$user->y1 = $y1;
-		$user->y2 = $y2;
+		$item->x1 = $x1;
+		$item->x2 = $x2;
+		$item->y1 = $y1;
+		$item->y2 = $y2;
 		
 		// timestamp last upload time - we use this to construct the URL
 		// to reference the icon so that browser doesn't use the old

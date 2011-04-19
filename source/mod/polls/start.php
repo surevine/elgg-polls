@@ -42,8 +42,8 @@
 		// Register some actions
 		register_action("polls/edit", FALSE, $CONFIG->pluginspath . "polls/actions/edit.php");
 		register_action("polls/editcandidate", FALSE, $CONFIG->pluginspath . "polls/actions/editcandidate.php");
-		register_action("polls/iconupload", FALSE, $CONFIG->pluginspath . "polls/actions/iconupload.php");
-		register_action("polls/cropicon", FALSE, $CONFIG->pluginspath . "polls/actions/cropicon.php");
+		elgg_register_action("polls/candidateicon/upload", $CONFIG->pluginspath . "polls/actions/iconupload.php");
+		elgg_register_action("polls/candidateicon/crop", $CONFIG->pluginspath . "polls/actions/cropicon.php");
 		register_action("polls/delete", FALSE, $CONFIG->pluginspath . "polls/actions/delete.php");
 		register_action("polls/vote", FALSE, $CONFIG->pluginspath . "polls/actions/vote.php");
 		register_action("polls/manage", FALSE, $CONFIG->pluginspath . "polls/actions/manage.php");
@@ -615,7 +615,7 @@
 	{
 		global $CONFIG;
 		
-		if ((!$returnvalue) && ($hook == 'entity:icon:url') && ($params['entity'] instanceof ElggObject))
+		if (($hook == 'entity:icon:url') && ($params['entity'] instanceof ElggObject))
 		{
 			$entity = $params['entity'];
 			$subtype = get_subtype_from_id($entity->subtype);
