@@ -55,7 +55,7 @@
 						array('internalname' => 'delete', 'value' => elgg_echo('delete')));
 */
 
-	$form .= '<input type="submit" class="submit_button" name="delete" value="' .
+	$form .= '<input type="submit" class="elgg-button elgg-button-submit" name="delete" value="' .
 				elgg_echo("delete") . '" />';
 
 	$form .= "&nbsp;";
@@ -69,7 +69,7 @@
 							'js' => 'onclick="javascript:history.back()"',
 							));
 */
-	$form .= '<input type="button" class="cancel_button" name="cancel" " .
+	$form .= '<input type="button" class="elgg-button" name="cancel" " .
 			"onclick="javascript:history.back()" value="' .
 			elgg_echo("cancel") . '" />';
 
