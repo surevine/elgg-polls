@@ -53,7 +53,7 @@
 		if ($icontime)
 		{
 			echo "<img src=\"" . $vars['url'] . "pg/polls/icon/" . $entity->getGUID() .
-							"/master/$icontime.jpg" . "\" border=\"0\" />";
+							"/large/$icontime.jpg" . "\" border=\"0\" class=\"elgg-polls-candidate-icon\" />";
 		}
 
 
@@ -63,7 +63,7 @@
 
 ?>
 		<!-- display tags -->
-		<p class="tags">
+		<div>
 			<?php
 				$url = "";
 
@@ -75,7 +75,7 @@
 				echo elgg_view('polls/localtags', array('baseurl' => $url, 'tags' => $vars['entity']->tags));
 			
 			?>
-		</p>
+		</div>
 <?php
 
 		// last edit & by whom

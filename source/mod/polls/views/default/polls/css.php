@@ -514,12 +514,18 @@ div.star,
 	text-decoration: none;
 }
 
-.polls-breadcrumbs ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
+.elgg-polls-tabs-container
+{
+	margin-top: 1em;
 }
 
-.polls-breadcrumbs ul li {
-	display: inline;
+#polls_candidate .elgg-polls-candidate-icon
+{
+	float: left;
+	margin: 0 10px 10px 0;
+}
+
+#polls_candidate .elgg-output
+{
+	text-align: justify;
 }

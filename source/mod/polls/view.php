@@ -48,16 +48,22 @@
 	}
 	
 	// Breadcrumbs
-	$body = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => $extra_trail));
+	$header = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => $extra_trail));
 
 	$title = $item->title;
-	$body .= elgg_view_title($title);
-	$body .= elgg_view_entity($item, TRUE);
+
+	$header .= elgg_view('page/layouts/content/header', array('title' => $title, 'buttons' => ''));
+	
+	$content = elgg_view_entity($item, array('full_view' => TRUE));
 	
 	//add comments
-	$body .= elgg_view_comments($item);
+	$content .= elgg_view_comments($item);
 	
-	$body = elgg_view_layout('two_column_left_sidebar', '', $body, $sidebar);
-
+	$body .= elgg_view_layout('content', array(
+		'content' => $content,
+		'header' => $header,
+		'filter' => '',
+	));
+	
 	// Finally draw the page
-	page_draw($title, $body);
+	echo elgg_view_page($title, $body);

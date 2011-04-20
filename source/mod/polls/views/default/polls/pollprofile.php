@@ -85,7 +85,7 @@
 	
 	<div class="contentWrapper">
 	<div id="polls_poll">
-	
+		
 <?php	
 	function display_tab($poll, $state, $link_name, $link_text)
 	{
@@ -110,7 +110,7 @@
 		// don't make it a link if we're already on that page
 		if ($state == $link_name)
 		{
-			$class = 'selected';
+			$class = 'elgg-state-selected';
 		}
 		else
 		{
@@ -133,7 +133,7 @@
 		echo $link_text;
 		echo '</a></li>';
 	}
-
+	
 	if ($entity)
 	{
 		echo elgg_view('output/longtext', array('value' => $latest->value));
@@ -168,7 +168,7 @@
 
 		// display candidates
 
-		echo '<div id="elgg_horizontal_tabbed_nav"><ul>';
+		echo '<div id="elgg_horizontal_tabbed_nav" class="elgg-polls-tabs-container"><ul class="elgg-menu elgg-menu-filter elgg-menu-hz elgg-menu-filter-default">';
 //		echo elgg_echo("polls:candidate:show");
 
 		display_tab($entity, $state, "active", ucfirst($active_name));

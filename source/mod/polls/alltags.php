@@ -37,25 +37,30 @@
 	}
 
 	global $CONFIG;
-
+	
 	// Breadcrumbs
-	$body = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => array(
+	$header = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => array(
 		array('title' => elgg_echo('polls:allcandidatetags'),
 		'url' => $CONFIG->url . 'pg/polls/alltags/' . $item_guid),
 	)));
 
 	$title = $item->title . ': ' . elgg_echo('polls:allcandidatetags');
-	$body .= elgg_view_title($title);
+
+	$header .= elgg_view('page/layouts/content/header', array('title' => $title, 'buttons' => ''));
 	
 	$tags = polls_get_all_candidate_tags_for_a_poll($item_guid);
 	
-	$body .= elgg_view('polls/alltags', array(
+	$content = elgg_view('polls/alltags', array(
 		'baseurl' => $CONFIG->url . 'pg/polls/view/' . $item_guid,
 		'tags' => $tags
 	));
 	
-	$body = elgg_view_layout('two_column_left_sidebar', '', $body, $sidebar);
-
+	$body .= elgg_view_layout('content', array(
+		'content' => $content,
+		'header' => $header,
+		'filter' => '',
+	));
+	
 	// Finally draw the page
-	page_draw($title, $body);
-
+	echo elgg_view_page($title, $body);
+	

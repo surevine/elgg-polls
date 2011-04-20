@@ -39,7 +39,7 @@
 
 		if ($poll)
 		{
-			$breadcrumbs = "<li> &gt; <a href=\"{$poll->getURL()}\">$poll->title</a></li>" . $breadcrumbs;
+			$breadcrumbs = "<li><a href=\"{$poll->getURL()}\">$poll->title</a></li>" . $breadcrumbs;
 		}
 	}
 
@@ -74,7 +74,7 @@
 
 		// output it all
 
-		echo '<div id="pages_breadcrumbs" class="polls-breadcrumbs"><ul>';
+		echo '<div><ul class="elgg-menu elgg-breadcrumbs">';
 
 		if ($container_url)
 		{
@@ -89,7 +89,7 @@
 
 		if ($has_extra)
 		{
-			echo "<li> &gt; <a href=\"{$item->getURL()}\">$item->title</a></li>";
+			echo "<li><a href=\"{$item->getURL()}\">$item->title</a></li>";
 			
 			$i = 0;
 			$count = count($extra);
@@ -98,17 +98,17 @@
 			{
 				if (++$i < $count)
 				{
-					echo "<li> &gt; <a href=\"{$extra_item['url']}\">{$extra_item['title']}</a></li>";
+					echo "<li><a href=\"{$extra_item['url']}\">{$extra_item['title']}</a></li>";
 				}
 				else
 				{
-					echo "<li> &gt; {$extra_item['title']}</li>";			
+					echo "<li>{$extra_item['title']}</li>";			
 				}
 			}
 		}
 		else
 		{
-			echo "<li> &gt; $item->title</li>";
+			echo "<li>$item->title</li>";
 		}
 
 		echo "</ul></div>";

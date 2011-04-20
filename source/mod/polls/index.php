@@ -51,11 +51,15 @@
 
 	$objects = elgg_list_entities($options);
 
+	$content = elgg_view("polls/welcome");
+	$content .= $objects;
 	
-	$body = elgg_view_title($title);
-	$body .= elgg_view("polls/welcome");
-	$body .= $objects;
-	$body = elgg_view_layout('two_column_left_sidebar', '', $body);
+	$body .= elgg_view_layout('content', array(
+		'content' => $content,
+		'title' => $title,
+		'filter' => '',
+		'buttons' => '',
+	));
 	
 	// Finally draw the page
-	page_draw($title, $body);
+	echo elgg_view_page($title, $body);	
