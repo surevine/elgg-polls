@@ -40,7 +40,7 @@
 
 	if (!empty($vars['tags']))
 	{
-		$tagstr = '<ul class="elgg-polls-filter-tags">';
+		$tagstr = '<span class="elgg-icon elgg-icon-tag"></span><ul class="elgg-polls-filter-tags">';
 		
 		if (!is_array($vars['tags']))
 		{
