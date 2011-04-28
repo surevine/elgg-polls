@@ -42,7 +42,14 @@
 	if (($item) && $item->canEdit() && $item->getSubtype() == 'poll_candidate')
 	{
 		$area2 .= elgg_view("polls/candidateicon/upload", array('entity' => $item));
-		$area2 .= elgg_view("polls/candidateicon/crop", array('entity' => $item));
+		
+		// If an icon has been uploaded then show the cropping tool
+		$icontime = $item->icontime;
+
+		if ($icontime && $icontime != "default")
+		{
+			$area2 .= elgg_view("polls/candidateicon/crop", array('entity' => $item));
+		}
 	}
 	else
 	{
