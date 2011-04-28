@@ -40,7 +40,7 @@
 
 	if (!empty($vars['tags']))
 	{
-		$tagstr = "";
+		$tagstr = '<ul class="elgg-polls-filter-tags">';
 		
 		if (!is_array($vars['tags']))
 		{
@@ -49,11 +49,6 @@
 
 		foreach ($vars['tags'] as $tag)
 		{
-			if (!empty($tagstr))
-			{
-				$tagstr .= ", ";
-			}
-
 			if (!empty($vars['type']))
 			{
 				$type = "&type={$vars['type']}";
@@ -63,6 +58,8 @@
 				$type = "";
 			}
 
+			$tagstr .= '<li>';
+			
 			if (is_string($tag))
 			{
 				$tagstr .= "<a rel=\"tag\" href=\"{$vars['url']}tag/" . urlencode($tag) .
@@ -86,11 +83,15 @@
 				$remove_tag_string .= rawurlencode($thistag);
 			}
 
-			$tagstr .= '<span class="filter_delete"><a href="' . $url . '?tag=' . $remove_tag_string .
-						'" title="' . elgg_echo('polls:filter:clear') .
-						'"><span class="polls-accessibility-hidden">' .
-						elgg_echo('polls:filter:clear') . '</span></a></span>';
+			$tagstr .= '<a href="' . $url . '?tag=' . $remove_tag_string .
+						'" title="' . elgg_echo('polls:filter:clear', array($tag)) .
+						'" class="elgg-icon elgg-icon-delete-alt"><span class="polls-accessibility-hidden">' .
+						elgg_echo('polls:filter:clear') . '</span></a>';
+			
+			$tagstr .= '</li>';
 		}
+		
+		$tagstr .= '</ul>';
 		
 		echo $tagstr;
 	}

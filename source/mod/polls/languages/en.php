@@ -220,7 +220,7 @@
 			'polls:icon:uploaded' => "Your icon was successfully uploaded.",
 			'polls:paginate:others' => "Others",
 			'polls:filter:filteredby' => "Filtered by:",
-			'polls:filter:clear' => 'clear filter',
+			'polls:filter:clear' => 'Remove %s from filter',
 
 	
 		/**

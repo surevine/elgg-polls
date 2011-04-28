@@ -228,29 +228,32 @@
 	font-size: 86%;
 }
 
-.filter_delete
-{
-	cursor: pointer;
-	width: 14px;
-	height: 14px;	
-	margin-left: 5px;
-	zoom: 1;
-	display: -moz-inline-stack;
-	display: inline-block;
-	vertical-align: middle;
-	position:relative;
+.elgg-polls-filter {
+	margin: 10px 0 10px 0;
 }
 
-.filter_delete a {
-	display: block;
-	width: 14px;
-	height: 14px;	
-	background: url("<?php echo $vars['url']; ?>_graphics/icon_customise_remove.png") no-repeat;
+.elgg-polls-icon-localtags {
+	background-position: 0 -1026px;
 }
 
-.filter_delete a:hover
-{
-	background-position: 0 -16px;
+ul.elgg-polls-filter-tags {
+	display: inline;
+	margin: 10px 0 5px 5px;
+}
+
+.elgg-polls-filter-tags > li {
+	border: 2px solid #ccc;
+	background: #eee;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	padding: 5px;
+	display: inline;
+	margin-right: 5px;
+}
+
+.elgg-polls-filter-tags .elgg-icon {
+	vertical-align: text-bottom;
 }
 
 .owner_timestamp

@@ -54,7 +54,7 @@
 	$content = elgg_view("polls/welcome");
 	$content .= $objects;
 	
-	$body .= elgg_view_layout('content', array(
+	$body = elgg_view_layout('content', array(
 		'content' => $content,
 		'title' => $title,
 		'filter' => '',

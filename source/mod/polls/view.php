@@ -59,7 +59,7 @@
 	//add comments
 	$content .= elgg_view_comments($item);
 	
-	$body .= elgg_view_layout('content', array(
+	$body = elgg_view_layout('content', array(
 		'content' => $content,
 		'header' => $header,
 		'filter' => '',

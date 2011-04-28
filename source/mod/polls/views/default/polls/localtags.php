@@ -29,7 +29,7 @@
 		}
 
 		echo '<span>';
-		echo elgg_view_icon('tag');
+		echo '<span class="elgg-icon elgg-polls-icon-localtags"></span>';
 		echo '<ul class="elgg-tags">';
 		
 		foreach ($taglist as $tag)
@@ -38,7 +38,7 @@
 			{
 				if (in_array($tag, $current_tags))
 				{
-					$tagstr .= htmlentities($tag, ENT_QUOTES, 'UTF-8');
+					$tagstr .= '<li>' . htmlentities($tag, ENT_QUOTES, 'UTF-8') . '</li>';
 				}
 				else
 				{

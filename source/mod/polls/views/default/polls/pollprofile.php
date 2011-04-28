@@ -223,14 +223,13 @@
 			$url_split = explode('?', $_SERVER['REQUEST_URI']);
 			$url = $url_split[0];
 
-			echo "<p>";
+			echo '<div class="elgg-polls-filter">';
 			echo elgg_echo("polls:filter:filteredby") . " ";
-			echo '<span class="tags">';
 			echo elgg_view('polls/filtertags', array('tags' => $tag_filter, 'baseurl' => $url));
-			echo '</span>';
 
 //			echo '<a class="filter_delete" href="' . $url . '">' . elgg_echo("polls:filter:clear") . '</a>';
 
+			echo '</div>';
 		}
 
 
