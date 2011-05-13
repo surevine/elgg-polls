@@ -14,14 +14,20 @@
 	function draw_input_box($internal_name, $type, $disabled, ElggEntity $entity,
 							$default_value, $options)
 	{
+		// If the input type is hidden then don't show the label.
+		$show_label = ($type != 'hidden');
+		
 		$box = "";
 
-		$box .= "<p>";
-		$box .= "<label>";
-		$box .= elgg_echo("polls:{$internal_name}");
-		$box .= "</label>";
-		$box .= "<br />";
-
+		if($show_label)
+		{
+			$box .= "<p>";
+			$box .= "<label>";
+			$box .= elgg_echo("polls:{$internal_name}");
+			$box .= "</label>";
+			$box .= "<br />";
+		}
+		
 		if ($_SESSION['forwarded_form_data'][$internal_name])
 		{
 			$value = $_SESSION['forwarded_form_data'][$internal_name];
@@ -46,7 +52,10 @@
 
 		$box .= elgg_view("input/{$type}", $parameters);
 
-		$box .= "</p>";
+		if($show_label)
+		{
+			$box .= "</p>";
+		}
 
 		return $box;
 	}

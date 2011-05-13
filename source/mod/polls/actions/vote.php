@@ -10,6 +10,8 @@
 	* @link http://www.surevine.com/
 */
 
+	require_once(dirname(__FILE__) . "/../lib.php");
+
 	gatekeeper();
 	action_gatekeeper();
 
@@ -18,10 +20,12 @@
 
 	$is_ajax = ( get_input('ajax') != '' ? TRUE : FALSE );
 	
+	$vote = FALSE;
+	$vote_option = FALSE;
+	
 	if ($candidate && $candidate->state == "active")
 	{
 		$poll = get_entity($candidate->parent_guid);
-
 
 		// work out type of voting
 
@@ -62,9 +66,73 @@
 				// inputs on the same page
 				$vote = get_input('star' . $candidate_guid);
 			}
+			else if ($voting_type == 'custom_options')
+			{
+				$vote_annotation_type = "poll_custom_options";
+				
+				if($poll->vote_options)
+				{
+					$vote_options = explode(',', $poll->vote_options);
+				}
+				else
+				{
+					$vote_options = array();
+				}
+				 
+				if($poll->vote_option_values)
+				{
+					$vote_option_values = explode(',', $poll->vote_option_values);
+				}
+				else
+				{
+					$vote_option_values = array();
+				} 
+				
+				$vote_option = get_input('vote_option');
+
+				$found = FALSE;
+				
+				foreach($vote_options as $key => $option)
+				{
+					if(trim($option->value) == trim($chosen_vote_option))
+					{
+						$found = TRUE;
+						break;
+					}
+				}
+				
+				// If the given option is a valid one
+				if($found)
+				{
+					if(isset($vote_option_values[$vote]))
+					{
+						$vote = (int) $vote_option_values[$vote];
+					}
+					else
+					{
+						$vote = 0;
+					}
+				}
+			}
 		}
 
-
+		// Redirect on failure
+		if($vote === FALSE)
+		{
+			register_error(elgg_echo("polls:vote:error"));
+			if ($is_ajax)
+			{
+				$return = array('success' => FALSE);
+				
+				echo json_encode($return);
+				exit;
+			}
+			else
+			{
+				forward($_SERVER['HTTP_REFERER']);
+			}
+		}
+		
 		// check if they've already voted
 
 		// hack count_annotations has a bug where it ignores the owner parameter
@@ -94,6 +162,33 @@
 			$voteAnnotation->value = (int) $vote;
 			$voteAnnotation->save();
 
+			// And change the vote option if required
+			if($vote_option !== FALSE)
+			{
+				$vote_option_list = get_annotations($candidate->getGUID(), "", "", $vote_annotation_type . '_option',
+								"", $_SESSION['user']->getGUID(), 1, 0);
+
+				if(empty($vote_option_list))
+				{
+					$candidate->annotate($vote_annotation_type . '_option', $vote_option, $poll->access_id);
+				}
+				else
+				{
+					$vote_option_annotation = $vote_option_list[0];
+
+					// Decrement the previously voted for option
+					$old_vote_option_count_metadata_name = elgg_polls_sanitise_metadata_key($vote_count_metadata_name . '_' . $vote_option_annotation->value);
+					$candidate->$old_vote_option_count_metadata_name--;
+				}
+				
+				// Increment the newly voted for option
+				$new_vote_option_count_metadata_name = elgg_polls_sanitise_metadata_key($vote_count_metadata_name . '_' . trim($vote_option));
+				$candidate->$new_vote_option_count_metadata_name++;
+				
+				$vote_option_annotation->value = $vote_option;
+				$vote_option_annotation->save();
+			}
+
 			if (!$is_ajax)
 			{
 				system_message(elgg_echo('polls:vote:changed'));
@@ -104,6 +199,15 @@
 			// add the vote - same access id as the poll and the candidate
 			$candidate->annotate($vote_annotation_type, $vote, $poll->access_id, 0, "integer");
 
+			if($vote_option !== FALSE)
+			{
+				$candidate->annotate($vote_annotation_type . '_option', $vote_option, $poll->access_id);
+
+				// Increment the newly voted for option
+				$vote_option_count_metadata_name = elgg_polls_sanitise_metadata_key($vote_count_metadata_name . '_' . $vote_option);
+				$candidate->$vote_option_count_metadata_name++;
+			}
+			
 			$candidate->$vote_count_metadata_name++;
 			$candidate->$vote_total_metadata_name += $vote;
 
@@ -114,7 +218,6 @@
 				system_message(elgg_echo('polls:vote:success'));
 			}
 		}
-
 
 		if ($doing_category_vote)
 		{
@@ -132,7 +235,7 @@
 				$candidate->votes_score = $candidate->votes_total;
 				add_to_river('river/polls/vote_thumbs', 'vote', $_SESSION['user']->guid, $candidate_guid);
 			}
-			else
+			else if ($voting_type == "stars5")
 			{
 				// This is fine for the moment as it can never be over 5 (therefore 1 unit digit)
 				// If it goes to 10 or over it could cause problems as it is alphanumerically sorted
@@ -143,6 +246,13 @@
 				// so we can display how many stars the candidate received in the river
 				add_to_river('river/polls/vote_stars5', 'vote' . $vote,
 								$_SESSION['user']->guid, $candidate_guid);
+			}
+			else if ($voting_type == 'custom_options')
+			{
+				$candidate->votes_score = $candidate->votes_total;
+
+				add_to_river('river/polls/vote_custom_options', $vote_option,
+					$_SESSION['user']->guid, $candidate_guid);
 			}
 		}
 

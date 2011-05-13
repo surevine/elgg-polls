@@ -73,10 +73,15 @@
 			'polls:write_access_id' => 'Moderator access (who can manage candidates, edit the poll settings, or delete the poll)',
 
 			'polls:voting_type' => 'Voting type',
-			'polls:thumbs' => 'Thumbs up',
-			'polls:rank' => 'Rank',
-			'polls:stars' => 'Star rating',
+			'polls:voting_type:thumbs' => 'Thumbs up',
+			'polls:voting_type:rank' => 'Rank',
+			'polls:voting_type:stars' => 'Star rating',
+			'polls:voting_type:custom_options' => 'Custom Voting Options',
 
+			'polls:vote_options' => 'The options for the Custom Voting Options, separated by commas',
+			'polls:vote_option_colours' => 'The optional colours for the Custom Voting Options, #xxxxxx format separated by commas',
+			'polls:vote_option_values' => 'The optional candidate score for the Custom Voting Options, separated by commas',
+	
 			'polls:display_order' => 'Candidate display order',
 			'polls:sort:az' => 'Alphabetical (A-Z)',
 			'polls:sort:za' => 'Alphabetical (Z-A)',
@@ -179,6 +184,7 @@
 			'polls:manage:notselected' => 'No candidates were selected',
 			'polls:candidate:comments' => '%s comments',
 			'polls:candidate:comments:one' => '1 comment',
+			'polls:vote:error' => 'An error occurred and your vote could not be counted',
 	
 		/**
 		 * Poll
@@ -205,6 +211,8 @@
 			'polls:vote:categories:title' => 'Detailed categories',
 			'polls:vote:categories:description' => 'Voting in these categories does not affect the overall score of the candidate',
 
+			'polls:vote:custom_options:previous' => 'You voted "%s"',
+	
 
 
 			'polls:iconinstructions' => "The candidate icon is the image that's displayed on your candidate's page. <br /> You can change it as often as you like. (File formats accepted: GIF, JPG or PNG)",
@@ -279,6 +287,9 @@
 			'polls:river:vote:category:stars:group' => "%s voted %s for %s stars within %s in the %s poll in %s",
 			'polls:river:vote:category:stars:group:one' => "%s voted 1 for %s star within %s in the %s poll in %s",
 
+			'polls:river:vote:custom_options' => "%s voted \"%s\" for %s in the %s poll",
+			'polls:river:vote:custom_options:group' => "%s voted \"%s\" for %s in the %s poll in %s",
+	
 			'poll:river:annotate' => 'a comment on this poll',
 			'poll_candidate:river:annotate' => 'a comment on this poll candidate',
 	

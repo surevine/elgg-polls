@@ -200,11 +200,34 @@
 					}
 				}
 			}
+			else if ($voting_type == "custom_options")
+			{
+				$vote_annotation_type = "poll_custom_options";
+				
+				if($poll->vote_options)
+				{
+					$vote_options = explode(',', $poll->vote_options);
+				}
+				else
+				{
+					$vote_options = array();
+				} 
+				
+				if($poll->vote_option_colours)
+				{
+					$vote_option_colours = explode(',', $poll->vote_option_colours);
+				}
+				else
+				{
+					$vote_option_colours = array();
+				} 
+			}
 		}
 
 		// count votes and work out if user can vote
 
 		$canVote = FALSE;
+		$previousVote = FALSE;
 
 		if (get_context() == "polls" && isloggedin() && $candidate->state == "active")
 		{
@@ -272,7 +295,10 @@
 
 		$form .= '<div class="polls_vote_area">';
 
-		$form .= $totalVotes;
+		// We won't display the total number of votes for the custom option poll type
+		if($voting_type != "custom_options") {
+			$form .= $totalVotes;
+		}
 
 		$form .= elgg_view('input/hidden', array('internalname' => 'candidate_guid',
 													'value' => $candidate->getGUID()));
@@ -457,7 +483,88 @@
 			}
 
 		}
+		else if ($voting_type == "custom_options")
+		{
+			$form .= '<ul class="elgg-polls-custom-voting-options" id="elgg-polls-custom-voting-options-' . $candidate->getGUID() . '">';
 
+			foreach($vote_options as $key => $option)
+			{
+				$option = trim($option);
+				
+				$vote_option_count_metadata_name = elgg_polls_sanitise_metadata_key($vote_count_metadata_name . '_' . $option);
+				
+				$button_attrs = array(
+					'title' => $option,
+					'value' => $option,
+					'name' => 'vote_option',
+				);
+				
+				if (isset($vote_option_colours[$key]))
+				{
+					$button_attrs['style'] = 'background-color: ' . htmlentities($vote_option_colours[$key], ENT_QUOTES, 'UTF-8');
+				}
+				
+				if (!$canVote)
+				{
+					$button_attrs['disabled'] = 'disabled';
+					$button_attrs['class'] = 'elgg-button-submit elgg-state-disabled';
+				}
+
+				$option_votes = (int) $candidate->$vote_option_count_metadata_name;
+				
+				if ($option_votes)
+				{
+					if ($option_votes == 1)
+					{
+						$option_votes_text = elgg_echo("polls:vote:total:one");
+					}
+					else
+					{
+						$option_votes_text = sprintf(elgg_echo("polls:vote:total"), $option_votes);
+					}
+				}
+				else
+				{
+					$option_votes_text = elgg_echo("polls:vote:total:none");
+				}
+				
+				$form .= '<li>' . elgg_view('input/submit', $button_attrs) . '<span class="elgg-polls-vote-count">' . $option_votes_text . '</span></li>';
+			}
+			
+			$form .= '</ul>';
+						
+			// Display the previous vote if there is one
+			if($previousVote !== FALSE)
+			{
+				$vote_option_list = get_annotations($candidate->getGUID(), "", "", $vote_annotation_type . '_option',
+								"", $_SESSION['user']->getGUID(), 1, 0);
+				
+				if(!empty($vote_option_list))
+				{
+					$previous_vote_option = $vote_option_list[0]->value;
+					
+					$form .= '<div class="elgg-polls-custom-voting-options-previous-vote" id="elgg-polls-custom-voting-options-previous-vote-' . $candidate->getGUID() . '">';
+					
+					$form .= elgg_echo('polls:vote:custom_options:previous', array($previous_vote_option));
+					
+					if(get_context() == "polls" && $poll->revote == "yes")
+					{
+						$previous_vote_element_id = 'elgg-polls-custom-voting-options-previous-vote-' . $candidate->getGUID();
+						$vote_options_element_id = 'elgg-polls-custom-voting-options-' . $candidate->getGUID();
+						
+						$form .= '<div class="elgg-polls-custom-voting-options-change-vote">' . elgg_view('input/button', array(
+							'name' => 'change_vote',
+							'value' => elgg_echo('polls:vote:changevote'),
+							'onclick' => '$(\'#' . $previous_vote_element_id . '\').slideUp(); $(\'#' . $vote_options_element_id . ' input\').attr(\'disabled\', \'\').removeClass(\'elgg-state-disabled\');',
+						)) . '</div>';
+					}
+					
+					$form .= '</div>';
+				}
+			}
+			
+		}
+		
 		$form .= '</div>';
 
 		if (get_context() == "polls_manage")
@@ -1088,4 +1195,71 @@
 		}
 		
 		return $tags;
+	}
+
+	/**
+	 * Convert a hex color code to its RGB equivalent
+	 *
+	 * @param string $hexStr hexadecimal color value
+	 * @return array Returns <code>FALSE</code> if invalid hex color value
+	 */                                                                                                 
+	function elgg_polls_hex_2_rgb($hexStr) {
+	    $hexStr = preg_replace("/[^0-9A-Fa-f]/", '', $hexStr); // Gets a proper hex string
+	    $rgbArray = array();
+	    if (strlen($hexStr) == 6)
+	    {
+	    	//If a proper hex code, convert using bitwise operation. No overhead... faster
+	        $colorVal = hexdec($hexStr);
+	        $rgbArray['red'] = 0xFF & ($colorVal >> 0x10);
+	        $rgbArray['green'] = 0xFF & ($colorVal >> 0x8);
+	        $rgbArray['blue'] = 0xFF & $colorVal;
+	    }
+	    elseif (strlen($hexStr) == 3)
+	    {
+	    	//if shorthand notation, need some string manipulations
+	        $rgbArray['red'] = hexdec(str_repeat(substr($hexStr, 0, 1), 2));
+	        $rgbArray['green'] = hexdec(str_repeat(substr($hexStr, 1, 1), 2));
+	        $rgbArray['blue'] = hexdec(str_repeat(substr($hexStr, 2, 1), 2));
+	    } else {
+	        return FALSE; //Invalid hex color code
+	    }
+	    return $rgbArray; // returns the rgb array
+	}
+	
+	/**
+	 * Returns a css colour which should be visible against a given background colour.
+	 * 
+	 * @param string $hexColour the background colour in css hex format.
+	 * @return string the foreground colour in css hex format, or <code>FALSE</code> if the background colour was invalid.
+	 */
+	function elgg_polls_foreground_colour($hexColour)
+	{
+		$colour = elgg_polls_hex_2_rgb($hexColour);
+		
+		if(!$colour)
+		{
+			return FALSE;
+		}
+		
+		// Return white if the colour is dark, otherwise black
+		if(array_sum($colour) < 382)
+		{
+			return '#FFFFFF';
+		}
+		else
+		{
+			return '#000000';
+		}
+	}
+	
+	/**
+	 * Replaces non-word characters with underscores so that the
+	 * string can be used as a sensible metadata key.
+	 * 
+	 * @param string $str the string to sanitise
+	 * @return the sanitised string
+	 */
+	function elgg_polls_sanitise_metadata_key($str)
+	{
+		return strtolower(preg_replace('/\W/', '_', $str));
 	}

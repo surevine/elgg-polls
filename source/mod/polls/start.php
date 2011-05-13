@@ -88,13 +88,20 @@
 											'default' => 'thumbs',
 											'editable' => FALSE,
 											'options' => array	(
-																	elgg_echo('polls:thumbs') => 'thumbs',
-																	elgg_echo('polls:stars') => 'stars5',
+																	elgg_echo('polls:voting_type:thumbs') => 'thumbs',
+																	elgg_echo('polls:voting_type:stars') => 'stars5',
+																	elgg_echo('polls:voting_type:custom_options') => 'custom_options',
 																	// elgg_echo('polls:rank') => 'rank',
 																)
 										),
 
 				'star_values' => array('type' => 'text', 'editable' => TRUE, 'default' => ''),
+
+				'vote_options' => array('type' => 'text', 'editable' => FALSE, 'default' => ''),
+										
+				'vote_option_colours' => array('type' => 'text', 'editable' => TRUE, 'default' => ''),
+
+				'vote_option_values' => array('type' => 'text', 'editable' => FALSE, 'default' => ''),
 
 				'moderated' => array	(
 											'type' => 'radio',
@@ -588,16 +595,17 @@
 		$item = $params['entity'];
 		$metadata = $params['metadata'];
 
-		if ($item && $item->getSubtype() == 'poll_candidate')
+		if (!$returnvalue && $item && $item->getSubtype() == 'poll_candidate')
 		{
 			$name = $metadata->name;
 
-			if ($name == "votes_count" || $name == "votes_total" || $name == "votes_time" ||
+			if(preg_match('/^votes_count/', $name) ||
+				$name == "votes_total" ||
+				$name == "votes_time" ||
 				$name == "votes_score" ||
 				strpos($name, "votes_count_category") === 0 ||
 				strpos($name, "votes_total_category") === 0)
 			{
-
 				return TRUE;
 			}
 		}

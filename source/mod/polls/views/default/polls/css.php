@@ -532,3 +532,28 @@ div.star,
 {
 	text-align: justify;
 }
+
+ul.elgg-polls-custom-voting-options li
+{
+	text-align: right;
+	margin-bottom: 2px;
+}
+
+ul.elgg-polls-custom-voting-options .elgg-polls-vote-count
+{
+	float: right;
+	width: 8em;
+	text-align: left;
+	margin-left: 0.5em;
+}
+
+.polls_vote_area .elgg-polls-custom-voting-options-change-vote
+{
+	display: inline;
+	margin-left: 0.5em;
+}
+
+ul.elgg-polls-custom-voting-options input.elgg-state-disabled
+{
+	background-image: url('<?php echo $vars['url']; ?>mod/polls/images/disabled-background.gif');
+}
