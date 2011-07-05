@@ -58,7 +58,6 @@
 		'content' => $content,
 		'title' => $title,
 		'filter' => '',
-		'buttons' => '',
 	));
 	
 	// Finally draw the page

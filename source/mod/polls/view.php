@@ -52,7 +52,7 @@
 
 	$title = $item->title;
 
-	$header .= elgg_view('page/layouts/content/header', array('title' => $title, 'buttons' => ''));
+	$header .= elgg_view('page/layouts/content/header', array('title' => $title));
 	
 	$content = elgg_view_entity($item, array('full_view' => TRUE));
 	
