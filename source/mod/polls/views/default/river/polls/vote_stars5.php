@@ -29,34 +29,19 @@
 
 	$where = "<a href=\"{$parent->getURL()}\">{$parent->title}</a>";
 
-	// get the container
-	$container = get_entity($parent->container_guid);
-
-
-	if ($container instanceof ElggGroup)
+	if ($vote == "1")
 	{
-		$group = "<a href=\"" . $container->getURL() . "\">" . $container->name . "</a>";
-
-		if ($vote == "1")
-		{
-			$string = sprintf(elgg_echo("polls:river:vote:stars:group:one"), $who, $what, $where, $group);
-		}
-		else
-		{
-			$string = sprintf(elgg_echo("polls:river:vote:stars:group"),
-								$who, $vote, $what, $where, $group);
-		}
+		$string = sprintf(elgg_echo("polls:river:vote:stars:one"), $who, $what, $where);
 	}
 	else
 	{
-		if ($vote == "1")
-		{
-			$string = sprintf(elgg_echo("polls:river:vote:stars:one"), $who, $what, $where);
-		}
-		else
-		{
-			$string = sprintf(elgg_echo("polls:river:vote:stars"), $who, $vote, $what, $where);
-		}
+		$string = sprintf(elgg_echo("polls:river:vote:stars"), $who, $vote, $what, $where);
 	}
 
-	echo $string;
+	$vars['summary'] = $string;
+
+	echo elgg_view('page/components/image_block', array(
+		'image' => elgg_view('river/elements/image', $vars),
+		'body' => elgg_view('river/elements/body', $vars),
+		'class' => 'elgg-river-item',
+	));

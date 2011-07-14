@@ -10,7 +10,7 @@
 	* @link http://www.surevine.com/
 */
 
-	require_once(dirname(__FILE__) . "/../lib.php");
+	elgg_load_library('elgg:polls');
 
 	gatekeeper();
 	action_gatekeeper();

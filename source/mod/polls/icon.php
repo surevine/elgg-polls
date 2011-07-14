@@ -11,9 +11,6 @@
 */
 
 
-	// Load the Elgg framework
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
-
 	// Get the size
 	$size = strtolower(get_input('size'));
 

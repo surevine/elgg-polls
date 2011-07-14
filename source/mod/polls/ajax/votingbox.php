@@ -10,10 +10,9 @@
 	* @link http://www.surevine.com/
 */
 
-
 	require_once(dirname(__FILE__) . "/../../../engine/start.php");
-	require_once(dirname(__FILE__) . "/../lib.php");
-	
+	elgg_load_library('elgg:polls');
+
 	$item_guid = get_input('candidate_guid');
 	set_context('polls');
 	

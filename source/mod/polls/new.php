@@ -11,7 +11,6 @@
 */
 
 
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
 	gatekeeper();
 
 	global $CONFIG;
@@ -32,9 +31,17 @@
 
 
 	$title = elgg_echo("polls:new");
-	$area2 .= elgg_view_title($title);
-	$area2 .= elgg_view("forms/polls/edit");
-	
-	$body = elgg_view_layout('two_column_left_sidebar', $area1, $area2);
-	
-	page_draw($title, $body);
+
+	elgg_push_breadcrumb($title);
+
+	$content = elgg_view("forms/polls/edit");
+
+	$params = array(
+		'content' => $content,
+		'title' => $title,
+		'filter' => '',
+	);
+	$body = elgg_view_layout('content', $params);
+
+	echo elgg_view_page($title, $body);
+

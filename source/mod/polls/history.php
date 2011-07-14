@@ -11,7 +11,6 @@
 */
 
 
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
 	gatekeeper();
 		
 	$item_guid = get_input('item_guid');
@@ -43,12 +42,19 @@
 	}
 	
 	$title = $item->title . ": " . $crumb_title;
-	
-	$area2 = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => array(
-		array('title' => $crumb_title, url => ''),
-	)));
-	
-	$area2 .= elgg_view_title($title);
+
+	if ($item->getSubtype() == 'poll_candidate')
+	{
+		$poll = get_entity($item->parent_guid);
+
+		if (!is_null($poll))
+		{
+			elgg_push_breadcrumb($poll->title, $poll->getURL());
+		}
+	}
+
+	elgg_push_breadcrumb($item->title, $item->getURL());
+	elgg_push_breadcrumb($crumb_title);
 
 	$options = array(
 		'guid' => $item_guid,
@@ -57,8 +63,13 @@
 		'order_by' => "n_table.time_created DESC"
 	);
 
-	$area2 .= elgg_list_annotations($options);
-	
-	$body = elgg_view_layout('two_column_left_sidebar', '', $area2, "");
+	$content = elgg_list_annotations($options);
 
-	echo elgg_view_page($title, $body, 'default');
+	$params = array(
+		'content' => $content,
+		'title' => $title,
+		'filter' => '',
+	);
+	$body = elgg_view_layout('content', $params);
+
+	echo elgg_view_page($title, $body);

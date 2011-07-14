@@ -47,7 +47,16 @@
 
 		if ($options)
 		{
-			$parameters['options'] = $options;
+			// input/access has changed to only use options_values
+
+			if ($type == 'access')
+			{
+				$parameters['options_values'] = $options;
+			}
+			else
+			{
+				$parameters['options'] = $options;
+			}
 		}
 
 		$box .= elgg_view("input/{$type}", $parameters);
@@ -129,6 +138,17 @@
 					{
 						$options = get_write_access_array();
 						unset($options[ACCESS_FRIENDS]);
+
+						$container = get_entity($container_guid);
+
+						if ($container instanceof ElggGroup)
+						{
+							// non-members can't write to a group so
+							// don't allow 'logged-in' or 'public' access
+
+							unset($options[ACCESS_LOGGED_IN]);
+							unset($options[ACCESS_PUBLIC]);
+						}
 					}
 					else if ($details['special'] == "display_order")
 					{

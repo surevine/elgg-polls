@@ -16,18 +16,13 @@
 	function polls_init()
 	{
 		global $CONFIG;
-		
-		// Set up the menu for logged in users
-		if (isloggedin()) 
-		{
-			add_menu(elgg_echo('polls'), $CONFIG->wwwroot . "pg/polls/owned/" .
-						$_SESSION['user']->username,'polls');
-		}
-		else
-		{
-			add_menu(elgg_echo('polls'), $CONFIG->wwwroot . "pg/polls/world");
-		}
-		
+
+		elgg_register_library('elgg:polls', elgg_get_plugins_path() . 'polls/lib.php');
+
+		// Set up the menu
+		$item = new ElggMenuItem('polls', elgg_echo('polls'), 'polls/world');
+		elgg_register_menu_item('site', $item);
+
 		// Extend hover-over menu	
 		elgg_extend_view('profile/menu/links','polls/menu');
 		elgg_extend_view('metatags', 'polls/metatags');
@@ -53,11 +48,16 @@
 		elgg_extend_view('css','polls/css');
 		elgg_extend_view('js/initialise_elgg','polls/js');
 		elgg_extend_view('groups/menu/links', 'polls/menu'); // Add to groups context
-		elgg_extend_view('groups/right_column', 'polls/groupprofile_polls'); // Add to groups context
+		// this view has not been completed and was never activated
+		//elgg_extend_view('groups/tool_latest', 'polls/groupprofile_polls'); // Add to groups context
 		
 		// Register entity type
 		register_entity_type('object', 'poll_candidate');
 		register_entity_type('object', 'poll');
+
+		// add link to owner block
+		elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'polls_owner_block_menu');
+
 		
 		// Run the DB fix script if they haven't run yet
 		$plugin_revision = (int) get_plugin_setting('plugin_revision', 'polls');
@@ -207,7 +207,43 @@
 		global $CONFIG;
 		return $CONFIG->url . "pg/polls/view/{$entity->guid}";
 	}
-	
+
+
+	/**
+	 * Add owner block link
+	 */
+	function polls_owner_block_menu($hook, $type, $return, $params)
+	{
+		if (elgg_instanceof($params['entity'], 'group'))
+		{
+			$group = $params['entity'];
+
+			$url = 'polls/owned/' . $params['entity']->username;
+			$label = elgg_echo('polls:group');
+
+			if (isset($group->group_type))
+			{
+				// check for a typed group (implemented by separate Typed Groups plugin)
+				$types = elgg_trigger_plugin_hook('typed_groups:get_group_types', 'all', NULL, array());
+	 
+				if (!is_null($types))
+				{
+					$type = $types[$group->group_type];
+
+					if (!is_null($type))
+					{
+						$label = sprintf(elgg_echo('polls:group:typed'), $type['name']);
+					}
+				}
+			}
+
+			$item = new ElggMenuItem('polls:group', $label, $url);
+			$return[] = $item;
+		}
+
+		return $return;
+	}
+
 	
 	/**
 	 * Sets up submenus for the polls system.  Triggered on pagesetup.
@@ -220,26 +256,18 @@
 		$page_owner = page_owner_entity();
 		$context = get_context();
 
-		// Group submenu option
-		if ($page_owner instanceof ElggGroup && $context == 'groups')
-		{
-			add_submenu_item(sprintf(elgg_echo("polls:group"), $page_owner->name),
-								$CONFIG->wwwroot . "pg/polls/owned/" . $page_owner->username);
-		}
-
 		if (isloggedin() && ($context == "polls" || $context == "polls_manage"))
 		{
-			if (page_owner() != $_SESSION['user']->getGUID())
+			if (page_owner() == $_SESSION['user']->getGUID())
 			{
-				add_submenu_item(sprintf(elgg_echo("polls:owned"), page_owner_entity()->name),
-						$CONFIG->url . "pg/polls/owned/" . page_owner_entity()->username, 'pollslinksgeneral');
+				$url = 'polls/owned/' . $_SESSION['user']->username;
+				$item = new ElggMenuItem('polls:1st:mine', elgg_echo("polls:mine"), $url);
+				elgg_register_menu_item('page', $item);
+
+				$url = 'polls/world';
+				$item = new ElggMenuItem('polls:1st:all', elgg_echo("polls:all"), $url);
+				elgg_register_menu_item('page', $item);
 			}
-
-			add_submenu_item(elgg_echo("polls:mine"), $CONFIG->url . "pg/polls/owned/" .
-								$_SESSION['user']->username, 'pollslinksgeneral');
-
-			add_submenu_item(elgg_echo('polls:all'), $CONFIG->url . "pg/polls/world",
-								'pollslinksgeneral');
 		}
 	}
 
@@ -257,90 +285,56 @@
 
 		if ($entity->getSubtype() == 'poll')
 		{
-			// hack, let anyone who can view a poll add a candidate for now -
-			// eventually check to see if poll attributes allow it
-
-			if (isloggedin())
-			{
-				// work out container for any new candidates
-				// group polls store candidates in the group
-				// user polls store candidates in the user who adds the candidate
-				// (not the user who owns the poll)
-
-				$container_guid = $entity->container_guid;
-				$container = get_entity($container_guid);
-
-				if ($container && $container instanceof ElggGroup)
-				{
-					$candidate_container_guid = $container_guid;
-				}
-				else
-				{
-					$candidate_container_guid = $_SESSION['user']->getGUID();
-				}
-
-				// make sure the logged in user can write to that container -
-				// this should only fail if it's a group poll and they're not a
-				// member of the group
-
-				if (can_write_to_container(0, $candidate_container_guid))
-				{
-					if ($entity->moderated == "no")
-					{
-						$label = elgg_echo('polls:candidate:new');
-					}
-					else
-					{
-						$label = elgg_echo('polls:candidate:new:propose');
-					}
-
-					add_submenu_item($label,
-						$CONFIG->url . "pg/polls/newcandidate/" .
-						"?parent_guid={$item_guid}&container_guid={$candidate_container_guid}",
-						'pollsactions');
-				}
-			}
-
-			add_submenu_item(elgg_echo('polls:label:view'),
-					$CONFIG->url . "pg/polls/view/{$item_guid}", 'pollslinks');
+			$url = "polls/view/{$item_guid}";
+			$item = new ElggMenuItem('polls:view', elgg_echo("polls:label:view"), $url);
+			elgg_register_menu_item('page', $item);
 
 			if ($entity->canEdit())
 			{
 				// Only allow admin or owner to actually edit the poll
 				if (isadminloggedin() || ($entity->getOwner() == get_loggedin_userid()))
 				{
-					add_submenu_item(elgg_echo('polls:label:edit'),
-							$CONFIG->url . "pg/polls/edit/{$item_guid}", 'pollsactions');
+					$url = "polls/edit/{$item_guid}";
+					$item = new ElggMenuItem('polls:edit', elgg_echo("polls:label:edit"), $url);
+					elgg_register_menu_item('page', $item);
 				}
 
-				add_submenu_item(elgg_echo('polls:manage'),
-						$CONFIG->url . "pg/polls/manage/{$item_guid}", 'pollsactions');
+				$url = "polls/manage/{$item_guid}";
+				$item = new ElggMenuItem('polls:manage', elgg_echo("polls:manage"), $url);
+				elgg_register_menu_item('page', $item);
 
-				add_submenu_item(elgg_echo('polls:delete'),
-						$CONFIG->url . "pg/polls/delete/{$item_guid}", 'pollsactions');
+				$url = "polls/delete/{$item_guid}";
+				$item = new ElggMenuItem('polls:delete', elgg_echo("polls:delete"), $url);
+				elgg_register_menu_item('page', $item);
 
-				add_submenu_item(elgg_echo('polls:bulkupload'),
-						$CONFIG->url . "pg/polls/bulkupload/{$item_guid}", 'pollsactions');
+				$url = "polls/bulkupload/{$item_guid}";
+				$item = new ElggMenuItem('polls:bulkupload', elgg_echo("polls:bulkupload"), $url);
+				elgg_register_menu_item('page', $item);
 			}
 
-			add_submenu_item(elgg_echo('polls:label:history'),
-					$CONFIG->url . "pg/polls/history/{$item_guid}", 'pollslinks');
+			$url = "polls/history/{$item_guid}";
+			$item = new ElggMenuItem('polls:history', elgg_echo("polls:label:history"), $url);
+			elgg_register_menu_item('page', $item);
 
-			add_submenu_item(elgg_echo('polls:viewalltags'),
-					$CONFIG->url . "pg/polls/alltags/{$item_guid}", 'pollslinks');
+			$url = "polls/alltags/{$item_guid}";
+			$item = new ElggMenuItem('polls:tags', elgg_echo("polls:viewalltags"), $url);
+			elgg_register_menu_item('page', $item);
 		}
 		else if ($entity->getSubtype() == 'poll_candidate')
 		{
-			add_submenu_item(elgg_echo('polls:label:candidate:view'),
-					$CONFIG->url . "pg/polls/view/{$item_guid}", 'pollslinks');
+			$url = "polls/view/{$item_guid}";
+			$item = new ElggMenuItem('polls:candidate:view', elgg_echo("polls:label:candidate:view"), $url);
+			elgg_register_menu_item('page', $item);
 
 			if ($entity->canEdit())
 			{
-				add_submenu_item(elgg_echo('polls:label:candidate:edit'),
-						$CONFIG->url . "pg/polls/edit/{$item_guid}", 'pollsactions');
+				$url = "polls/edit/{$item_guid}";
+				$item = new ElggMenuItem('polls:candidate:edit', elgg_echo("polls:label:candidate:edit"), $url);
+				elgg_register_menu_item('page', $item);
 
-				add_submenu_item(elgg_echo('polls:editicon'),
-						$CONFIG->url . "pg/polls/editicon/{$item_guid}", 'pollsactions');
+				$url = "polls/editicon/{$item_guid}";
+				$item = new ElggMenuItem('polls:editicon', elgg_echo("polls:editicon"), $url);
+				elgg_register_menu_item('page', $item);
 			}
 
 			// only allowed to delete the candidate if you
@@ -351,12 +345,14 @@
 
 			if ($poll && $poll->canEdit())
 			{
-				add_submenu_item(elgg_echo('polls:candidate:delete'),
-					$CONFIG->url . "pg/polls/delete/{$item_guid}", 'pollsactions');
+				$url = "polls/delete/{$item_guid}";
+				$item = new ElggMenuItem('polls:candidate:delete', elgg_echo("polls:candidate:delete"), $url);
+				elgg_register_menu_item('page', $item);
 			}
 
-			add_submenu_item(elgg_echo('polls:label:candidate:history'),
-				$CONFIG->url . "pg/polls/history/{$item_guid}", 'pollslinks');
+			$url = "polls/history/{$item_guid}";
+			$item = new ElggMenuItem('polls:candidate:history', elgg_echo("polls:label:candidate:history"), $url);
+			elgg_register_menu_item('page', $item);
 		}
 
 		// load any other submenus items
@@ -377,6 +373,8 @@
 
 		if (isset($page[0]))
 		{
+			elgg_push_breadcrumb(elgg_echo('polls'), 'polls/world');
+
 			$command = $page[0];
 
 			// generate submenus as appropriate
@@ -619,46 +617,6 @@
 							'polls_write_permission_check_metadata');
 
 
-	function polls_candidateicon_hook($hook, $entity_type, $returnvalue, $params)
-	{
-		global $CONFIG;
-		
-		if (($hook == 'entity:icon:url') && ($params['entity'] instanceof ElggObject))
-		{
-			$entity = $params['entity'];
-			$subtype = get_subtype_from_id($entity->subtype);
-
-			if ($subtype == "poll_candidate")
-			{
-				$viewtype = $params['viewtype'];
-				$size = $params['size'];
-
-				$guid = $entity->getGUID();
-
-				if ($icontime = $entity->icontime)
-				{
-					$icontime = "{$icontime}";
-				}
-				else
-				{
-					$icontime = "default";
-				}
-
-				$filehandler = new ElggFile();
-				$filehandler->owner_guid = $entity->getOwner();
-				$filehandler->setFilename("polls/" . $guid . $size . ".jpg");
-				
-				if ($filehandler->exists())
-				{
-					$url = $CONFIG->url . "pg/polls/icon/$guid/$size/$icontime.jpg";
-					return $url;
-				}
-			}
-		}
-
-		return $returnvalue;
-	}
-
 	/**
 	 * This function will run any db scripts which need to be run if the current
 	 * version is too low.
@@ -717,10 +675,6 @@ SQL;
 		set_plugin_setting('plugin_revision', $current_revision, 'polls');
 	}
 	
-	// Now override icons
-	register_plugin_hook('entity:icon:url', 'object', 'polls_candidateicon_hook');
-
-
 	// Make sure the polls initialisation function is called on initialisation
 	register_elgg_event_handler('init','system','polls_init');
 	register_elgg_event_handler('pagesetup','system','polls_submenus');

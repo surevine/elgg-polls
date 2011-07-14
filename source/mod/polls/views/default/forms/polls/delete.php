@@ -22,8 +22,19 @@
 	{
 		$form .= sprintf(elgg_echo("polls:confirmdelete"), $item->title);
 
-		$count = get_entities_from_metadata("parent_guid", $item->guid,
-											"object", "poll_candidate", 0, 0, 0, "", 0, TRUE);
+
+		$metadata = array(
+			'parent_guid' => $item->guid,
+		);
+
+		$options = array(
+			'types' => 'object',
+			'subtypes' => 'poll_candidate',
+			'count' => TRUE,
+			'metadata_name_value_pairs' => $metadata
+		);
+
+		$count = elgg_get_entities_from_metadata($options);
 
 		if ($count > 0)
 		{

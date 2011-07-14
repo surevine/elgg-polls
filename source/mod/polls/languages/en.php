@@ -18,11 +18,12 @@
 		 */
 			
 			'polls' => "Polls",
-			'polls:mine' => "Your polls",
+			'polls:mine' => "My polls",
 			'polls:owned' => "%s's polls",
 			'polls:all' => "All site polls",
-			'polls:new' => "New poll",
+			'polls:new' => "Create a new poll",
 			'polls:group' => "Group polls",
+			'polls:group:typed' => "%s polls",
 			'polls:groupprofile' => "Group polls",
 			'polls:edit' => "Edit poll",
 			'polls:manage' => "Manage poll",
@@ -132,8 +133,8 @@
 
 			'polls:categories:renameareyousure' => 'You are renaming a category that has already received votes. Are you sure?',
 
-			'polls:candidate:howtoadd' => 'You can add a candidate by selecting "%s" from the menu.',
-			'polls:candidate:howtopropose' => 'You can propose a candidate by selecting "%s" from the menu.',
+			'polls:candidate:howtoadd' => 'You can add a candidate using the "%s" button above.',
+			'polls:candidate:howtopropose' => 'You can propose a candidate using the "%s" button above.',
 
 			'polls:moveselected' => 'Move selected candidates to',
 			'polls:movebutton' => 'Move',
@@ -269,8 +270,7 @@
 		/**
 		 * River items
 		 */
-			'polls:river:create' => "%s created the %s poll",
-			'polls:river:create:group' => "%s created the %s poll in %s",
+			'river:create:object:poll' => "%s created the %s poll",
 			'polls:river:addcandidate' => "%s added %s to the %s poll",
 			'polls:river:addcandidate:group' => "%s added %s to the %s poll in %s",
 	
