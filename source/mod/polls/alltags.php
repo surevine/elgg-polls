@@ -46,7 +46,7 @@
 
 	$title = $item->title . ': ' . elgg_echo('polls:allcandidatetags');
 
-	$header .= elgg_view('page/layouts/content/header', array('title' => $title, 'buttons' => ''));
+	$header .= elgg_view('page/layouts/content/header', array('title' => $title));
 	
 	$tags = polls_get_all_candidate_tags_for_a_poll($item_guid);
 	

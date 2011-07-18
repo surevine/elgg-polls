@@ -53,7 +53,9 @@
 		elgg_extend_view('css','polls/css');
 		elgg_extend_view('js/initialise_elgg','polls/js');
 		elgg_extend_view('groups/menu/links', 'polls/menu'); // Add to groups context
-		elgg_extend_view('groups/right_column', 'polls/groupprofile_polls'); // Add to groups context
+
+		// this view has not been completed and was never activated
+		//elgg_extend_view('groups/tool_latest', 'polls/groupprofile_polls'); // Add to groups context
 		
 		// Register entity type
 		register_entity_type('object', 'poll_candidate');
@@ -221,10 +223,28 @@
 		$context = get_context();
 
 		// Group submenu option
-		if ($page_owner instanceof ElggGroup && $context == 'groups')
+		if ($page_owner instanceof ElggGroup)
 		{
-			add_submenu_item(sprintf(elgg_echo("polls:group"), $page_owner->name),
-								$CONFIG->wwwroot . "pg/polls/owned/" . $page_owner->username);
+			if ($context == 'groups')
+			{
+				add_submenu_item(elgg_echo("polls:group"), $CONFIG->wwwroot . "pg/polls/owned/" . $page_owner->username);
+			}
+			else
+			{
+				// check for a typed group (implemented by separate Typed Groups plugin)
+				$types = elgg_trigger_plugin_hook('typed_groups:get_group_types', 'all', NULL, array());
+
+				if (!is_null($types))
+				{
+					$type = $types[$context];
+
+					if (!is_null($type))
+					{
+						add_submenu_item(sprintf(elgg_echo("polls:group:typed"), $type['name']),
+											$CONFIG->wwwroot . "pg/polls/owned/" . $page_owner->username);
+					}
+				}
+			}
 		}
 
 		if (isloggedin() && ($context == "polls" || $context == "polls_manage"))

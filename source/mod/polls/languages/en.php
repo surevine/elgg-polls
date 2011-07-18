@@ -23,6 +23,7 @@
 			'polls:all' => "All site polls",
 			'polls:new' => "New poll",
 			'polls:group' => "Group polls",
+			'polls:group:typed' => "%s polls",
 			'polls:groupprofile' => "Group polls",
 			'polls:edit' => "Edit poll",
 			'polls:manage' => "Manage poll",
