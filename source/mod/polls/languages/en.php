@@ -292,6 +292,9 @@
 	
 			'poll:river:annotate' => 'a comment on this poll',
 			'poll_candidate:river:annotate' => 'a comment on this poll candidate',
+
+			'river:comment:object:poll' => '%s commented on the poll %s',
+			'river:comment:object:poll_candidate' => '%s commented on %s',
 	
 			'river:commented:object:poll_candidate' => 'poll candidate',
 			'river:commented:object:poll' => 'poll',
