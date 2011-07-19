@@ -39,7 +39,8 @@
 				$options = array(
 					'types' => 'object',
 					'subtypes' => 'poll_candidate',
-					'metadata_name_value_pairs' => $metadata
+					'metadata_name_value_pairs' => $metadata,
+					'limit' => 0,
 				);
 
 				if ($children = elgg_get_entities_from_metadata($options))
