@@ -11,7 +11,6 @@
 */
 
 
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
 	gatekeeper();
 
 	$item_guid = get_input('item_guid');
@@ -31,35 +30,41 @@
 		elgg_set_page_owner_guid($page_owner->getGUID());
 	}
 
-	// set title
-	$area2 = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => array(
-		array('title' => elgg_echo('polls:editicon'), url => ''),
-	)));
-	
-	$area2 .= elgg_view_title(elgg_echo('polls:createicon:header'));
+	$title = elgg_echo("polls:editicon");
+
+	$poll = get_entity($item->parent_guid);
+
+	if (!is_null($poll))
+	{
+		elgg_push_breadcrumb($poll->title, $poll->getURL());
+	}
+
+	elgg_push_breadcrumb($item->title, $item->getURL());
+	elgg_push_breadcrumb($title);
 
 
 	if (($item) && $item->canEdit() && $item->getSubtype() == 'poll_candidate')
 	{
-		$area2 .= elgg_view("polls/candidateicon/upload", array('entity' => $item));
+		$content = elgg_view("polls/candidateicon/upload", array('entity' => $item));
 		
 		// If an icon has been uploaded then show the cropping tool
 		$icontime = $item->icontime;
 
 		if ($icontime && $icontime != "default")
 		{
-			$area2 .= elgg_view("polls/candidateicon/crop", array('entity' => $item));
+			$content .= elgg_view("polls/candidateicon/crop", array('entity' => $item));
 		}
 	}
 	else
 	{
-		$area2 .= elgg_echo("polls:noaccess");
+		$content = elgg_echo("polls:noaccess");
 	}
 
-		
-	// Get the form and correct canvas area
-	$body = elgg_view_layout("two_column_left_sidebar", '', $area2);
-		
-	// Draw the page
-	echo elgg_view_page(elgg_echo("polls:editicon"),$body);
+	$params = array(
+		'content' => $content,
+		'title' => $title,
+		'filter' => '',
+	);
+	$body = elgg_view_layout('content', $params);
 
+	echo elgg_view_page($title, $body);

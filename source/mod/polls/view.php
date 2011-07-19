@@ -11,8 +11,6 @@
 */
 
 
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
-
 	$item_guid = get_input('item_guid');
 	set_context('polls');
 	
@@ -25,13 +23,57 @@
 
 	$container_guid = $item->container_guid;
 
-	if ($container_guid)
+	if (!$container_guid)
 	{
-		set_page_owner($container_guid);
+		$container_guid = $item->owner_guid;
 	}
-	else
+
+	set_page_owner($container_guid);
+
+
+	// for now let anyone who can view a poll add a candidate -
+	// eventually check to see if poll attributes allow it
+
+	if (isloggedin() && $item->getSubtype() == 'poll')
 	{
-		set_page_owner($item->owner_guid);
+		// work out container for any new candidates
+		// group polls store candidates in the group
+		// user polls store candidates in the user who adds the candidate
+		// (not the user who owns the poll)
+
+		$container = get_entity($container_guid);
+
+		if ($container && $container instanceof ElggGroup)
+		{
+			$candidate_container_guid = $container_guid;
+		}
+		else
+		{
+			$candidate_container_guid = $_SESSION['user']->getGUID();
+		}
+
+		// make sure the logged in user can write to that container -
+		// this should only fail if it's a group poll and they're not a
+		// member of the group
+
+		if (can_write_to_container(0, $candidate_container_guid))
+		{
+			if ($item->moderated == "no")
+			{
+				$label = elgg_echo('polls:candidate:new');
+			}
+			else
+			{
+				$label = elgg_echo('polls:candidate:new:propose');
+			}
+
+			elgg_register_menu_item('title', array(
+				'name' => 'newcandidate',
+				'href' => "polls/newcandidate/?parent_guid={$item_guid}&container_guid={$candidate_container_guid}",
+				'text' => $label,
+				'link_class' => 'elgg-button elgg-button-action',
+			));
+		}
 	}
 
 	global $CONFIG;
@@ -46,24 +88,31 @@
 		$extra_trail[] = array('title' => elgg_echo('tags') . ': ' .
 			preg_replace('/,(?=\S)/', ', ', $tag_filter), 'url' => '');
 	}
-	
-	// Breadcrumbs
-	$header = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => $extra_trail));
 
 	$title = $item->title;
 
-	$header .= elgg_view('page/layouts/content/header', array('title' => $title));
-	
+	if ($item->getSubtype() == 'poll_candidate')
+	{
+		$poll = get_entity($item->parent_guid);
+
+		if (!is_null($poll))
+		{
+			elgg_push_breadcrumb($poll->title, $poll->getURL());
+		}
+	}
+
+	elgg_push_breadcrumb($title);
+
 	$content = elgg_view_entity($item, array('full_view' => TRUE));
 	
 	//add comments
 	$content .= elgg_view_comments($item);
 	
-	$body = elgg_view_layout('content', array(
+	$params = array(
 		'content' => $content,
-		'header' => $header,
+		'title' => $title,
 		'filter' => '',
-	));
-	
-	// Finally draw the page
+	);
+	$body = elgg_view_layout('content', $params);
+
 	echo elgg_view_page($title, $body);

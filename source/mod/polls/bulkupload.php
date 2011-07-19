@@ -10,7 +10,6 @@
 	* @link http://www.surevine.com/
 */
 
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
 	admin_gatekeeper();
 		
 	$item_guid = get_input('item_guid');
@@ -38,14 +37,16 @@
 
 	$title = sprintf(elgg_echo("polls:bulkupload:title"), $item->title);
 
-	$body = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => array(
-		array('title' => elgg_echo("polls:bulkupload"), url => ''),
-	)));
-	
-	$body .= elgg_view_title($title);
+	elgg_push_breadcrumb($item->title, $item->getURL());
+	elgg_push_breadcrumb(elgg_echo("polls:bulkupload"));
 
-	$body .= elgg_view("forms/polls/bulkupload", array('entity' => $item));
-	
-	$body = elgg_view_layout('two_column_left_sidebar', '', $body);
-	
-	page_draw($title, $body);
+	$content = elgg_view("forms/polls/bulkupload", array('entity' => $item));
+
+	$params = array(
+		'content' => $content,
+		'title' => $title,
+		'filter' => '',
+	);
+	$body = elgg_view_layout('content', $params);
+
+	echo elgg_view_page($title, $body);

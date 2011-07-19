@@ -317,6 +317,7 @@ input.polls_vote_thumb_up
 	min-width: 40px;
 	padding: 0;
 	width: 40px;
+	cursor: pointer;
 }
 
 input.polls_vote_thumb_up_disabled

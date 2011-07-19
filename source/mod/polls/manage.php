@@ -11,8 +11,6 @@
 */
 
 
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
-
 	$item_guid = get_input('item_guid');
 	set_context('polls_manage');
 	
@@ -37,26 +35,21 @@
 	global $CONFIG;
 
 
-	// Breadcrumbs
-	$header = elgg_view('polls/breadcrumbs', array('item' => $item, 'extra' => array(
-		array('title' => elgg_echo('polls:manage'),
-				'url' => $CONFIG->url . 'pg/polls/' . $item->guid . '/manage')
-	)));
-
 	$title = $item->title;
 
-	$header .= elgg_view('page/layouts/content/header', array('title' => $title));
+	elgg_push_breadcrumb($title, $item->getURL());
+	elgg_push_breadcrumb(elgg_echo('polls:manage'));
 	
 	$content = elgg_view_entity($item, array('full_view' => TRUE));
 	
 	//add comments
 	$content .= elgg_view_comments($item);
 	
-	$body = elgg_view_layout('content', array(
+	$params = array(
 		'content' => $content,
-		'header' => $header,
+		'title' => $title,
 		'filter' => '',
-	));
-	
-	// Finally draw the page
-	echo elgg_view_page($title, $body);	
+	);
+	$body = elgg_view_layout('content', $params);
+
+	echo elgg_view_page($title, $body);

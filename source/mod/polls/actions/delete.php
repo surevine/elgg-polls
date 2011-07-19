@@ -32,7 +32,17 @@
 			{
 				// first delete all candidates under this poll
 
-				if ($children = get_entities_from_metadata('parent_guid', $item->getGUID()))
+				$metadata = array(
+					'parent_guid' => $item->getGUID(),
+				);
+
+				$options = array(
+					'types' => 'object',
+					'subtypes' => 'poll_candidate',
+					'metadata_name_value_pairs' => $metadata
+				);
+
+				if ($children = elgg_get_entities_from_metadata($options))
 				{
 					foreach ($children as $child)
 					{

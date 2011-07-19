@@ -9,12 +9,7 @@
 	* @link http://www.surevine.com/
 */
 
-	$icon = elgg_view(
-			"graphics/icon", array	(
-										'entity' => $vars['entity'],
-										'size' => 'small',
-									)
-		);
+	$icon = elgg_view_entity_icon($vars['entity'], 'tiny');
 
 	$info .= "<p><b><a href=\"" . $vars['entity']->getUrl() . "\">" .
 				$vars['entity']->title . "</a></b></p>";

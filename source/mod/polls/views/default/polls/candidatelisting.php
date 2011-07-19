@@ -11,7 +11,7 @@
 */
 
 
-	require_once(dirname(dirname(dirname(dirname(__FILE__)))) . "/lib.php");
+	elgg_load_library('elgg:polls');
 
 	$candidate = $vars['entity'];
 

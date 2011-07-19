@@ -28,20 +28,12 @@
 
 	$where = "<a href=\"{$parent->getURL()}\">{$parent->title}</a>";
 
-	// get the container
-	$container = get_entity($parent->container_guid);
+	$string = sprintf(elgg_echo("polls:river:vote:custom_options"), $who, $vote_option, $what, $where);
 
+	$vars['summary'] = $string;
 
-	if ($container instanceof ElggGroup)
-	{
-		$group = "<a href=\"" . $container->getURL() . "\">" . $container->name . "</a>";
-
-		$string = sprintf(elgg_echo("polls:river:vote:custom_options:group"),
-								$who, $vote_option, $what, $where, $group);
-	}
-	else
-	{
-		$string = sprintf(elgg_echo("polls:river:vote:custom_options"), $who, $vote_option, $what, $where);
-	}
-
-	echo $string;
+	echo elgg_view('page/components/image_block', array(
+		'image' => elgg_view('river/elements/image', $vars),
+		'body' => elgg_view('river/elements/body', $vars),
+		'class' => 'elgg-river-item',
+	));

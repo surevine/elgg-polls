@@ -10,10 +10,9 @@
 	* @link http://www.surevine.com/
 */
 
-	require_once(dirname(dirname(dirname(__FILE__))) . "/engine/start.php");
-	require_once(dirname(__FILE__) . "/lib.php");
-
 	global $CONFIG;
+
+	elgg_load_library('elgg:polls');
 
 	$owner = page_owner_entity();
 	$viewer_is_owner = (isloggedin() && $owner->getGUID() == $_SESSION['user']->getGUID());
@@ -22,13 +21,14 @@
 
 	if ($owner && can_create_poll($owner))
 	{
-		add_submenu_item(elgg_echo('polls:new'), $CONFIG->url .
-							"pg/polls/new/?container_guid=" . page_owner(), 'pollsactions');
+		elgg_register_menu_item('title', array(
+			'name' => 'new',
+			'href' => 'polls/new/?container_guid=' . page_owner(),
+			'text' => elgg_echo("polls:new"),
+			'link_class' => 'elgg-button elgg-button-action',
+		));
 	}
 
-	$limit = get_input("limit", 10);
-	$offset = get_input("offset", 0);
-	
 	if ($viewer_is_owner)
 	{
 		$title = elgg_echo('polls:mine');
@@ -38,27 +38,28 @@
 		$title = sprintf(elgg_echo("polls:owned"), $owner->name);
 	}
 
-	
+	elgg_push_breadcrumb($title);
+
 	// Get objects
 
     $options = array(
         'types' => 'object',
 		'subtypes' => 'poll',
 		'container_guids' => page_owner(),
-		'limit' => $limit,
-		'full_view' => FALSE
+		'full_view' => FALSE,
+		'list_type_toggle' => FALSE,
+		'pagination' => TRUE,
 	);
 
 	$objects = elgg_list_entities($options);
 
-	$content = elgg_view("polls/welcome");
-	$content .= $objects;
-	
-	$body = elgg_view_layout('content', array(
-		'content' => $content,
+	$params = array(
+		'content' => $objects,
 		'title' => $title,
 		'filter' => '',
-	));
-	
+	);
+
+	$body = elgg_view_layout('content', $params);
+
 	// Finally draw the page
 	echo elgg_view_page($title, $body);	

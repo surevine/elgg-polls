@@ -10,7 +10,7 @@
 	* @link http://www.surevine.com/
 */
 
-	require_once(dirname(dirname(__FILE__)) . "/lib.php");
+	elgg_load_library('elgg:polls');
 
 	// Load configuration
 	global $CONFIG;
@@ -232,7 +232,17 @@
 				// to access permissions (all candidates inherit their read permission
 				// from their parent poll)
 
-				if ($children = get_entities_from_metadata('parent_guid', $poll->getGUID()))
+				$metadata = array(
+					'parent_guid' => $poll->getGUID(),
+				);
+
+				$options = array(
+					'types' => 'object',
+					'subtypes' => 'poll_candidate',
+					'metadata_name_value_pairs' => $metadata
+				);
+
+				if ($children = elgg_get_entities_from_metadata($options))
 				{
 					foreach ($children as $child)
 					{
@@ -266,7 +276,18 @@
 				get_input('keepordelete_category4') == "delete")
 			{
 				// find all candidates in the poll
-				if ($candidates = get_entities_from_metadata('parent_guid', $poll->getGUID()))
+
+				$metadata = array(
+					'parent_guid' => $poll->getGUID(),
+				);
+
+				$options = array(
+					'types' => 'object',
+					'subtypes' => 'poll_candidate',
+					'metadata_name_value_pairs' => $metadata
+				);
+
+				if ($candidates = elgg_get_entities_from_metadata($options))
 				{
 					foreach ($candidates as $candidate)
 					{

@@ -10,7 +10,6 @@
 	* @link http://www.surevine.com/
 */
 
-
 	$item = $vars['item'];
 	$performed_by = get_entity($item->subject_guid);
 	$object = get_entity($item->object_guid);
@@ -25,18 +24,13 @@
 
 	$where = "<a href=\"{$parent->getURL()}\">{$parent->title}</a>";
 
+	$string = sprintf(elgg_echo("polls:river:addcandidate"), $who, $what, $where);
 
-	// get the container
-	$container = get_entity($parent->container_guid);
+	$vars['summary'] = $string;
 
-	if ($container instanceof ElggGroup)
-	{
-		$group = "<a href=\"" . $container->getURL() . "\">" . $container->name . "</a>";
-		$string = sprintf(elgg_echo("polls:river:addcandidate:group"), $who, $what, $where, $group);
-	}
-	else
-	{
-		$string = sprintf(elgg_echo("polls:river:addcandidate"), $who, $what, $where);
-	}
+	echo elgg_view('page/components/image_block', array(
+		'image' => elgg_view('river/elements/image', $vars),
+		'body' => elgg_view('river/elements/body', $vars),
+		'class' => 'elgg-river-item',
+	));
 
-	echo $string;
