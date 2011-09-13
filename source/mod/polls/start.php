@@ -34,6 +34,9 @@
 		register_entity_url_handler('polls_url', 'object', 'poll');
 		register_entity_url_handler('polls_url', 'object', 'poll_candidate');
 		
+		// custom icons
+		elgg_register_plugin_hook_handler('entity:icon:url', 'object', 'poll_candidate_icon_hook');
+
 		// Register some actions
 		register_action("polls/edit", FALSE, $CONFIG->pluginspath . "polls/actions/edit.php");
 		register_action("polls/editcandidate", FALSE, $CONFIG->pluginspath . "polls/actions/editcandidate.php");
@@ -206,6 +209,33 @@
 	{
 		global $CONFIG;
 		return $CONFIG->url . "pg/polls/view/{$entity->guid}";
+	}
+
+
+	/**
+	 * Serves the candidate's icon
+	 *
+	 * @param string $hook
+	 * @param string $entity_type
+	 * @param string $returnvalue
+	 * @param array  $params
+	 * @return string
+	 */
+	function poll_candidate_icon_hook($hook, $entity_type, $returnvalue, $params)
+	{
+		$entity = $params['entity'];
+		if (elgg_instanceof($entity, 'object', 'poll_candidate'))
+		{
+			$size = $params['size'];
+			$guid = $entity->getGUID();
+
+			if (isset($entity->icontime)) {
+				$icontime = $entity->icontime;
+				return "polls/icon/$guid/$size/$icontime.jpg";
+			} else {
+				return 'mod/polls/images/candidate_' . $size . '.gif';
+			}
+		}
 	}
 
 
