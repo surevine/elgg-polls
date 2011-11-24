@@ -555,7 +555,7 @@
 						$form .= '<div class="elgg-polls-custom-voting-options-change-vote">' . elgg_view('input/button', array(
 							'name' => 'change_vote',
 							'value' => elgg_echo('polls:vote:changevote'),
-							'onclick' => '$(\'#' . $previous_vote_element_id . '\').slideUp(); $(\'#' . $vote_options_element_id . ' input\').attr(\'disabled\', \'\').removeClass(\'elgg-state-disabled\');',
+							'onclick' => '$(\'#' . $previous_vote_element_id . '\').slideUp(); $(\'#' . $vote_options_element_id . ' input\').removeAttr(\'disabled\').removeClass(\'elgg-state-disabled\');',
 						)) . '</div>';
 					}
 					
@@ -580,8 +580,26 @@
 		}
 		else
 		{
+			$form_id = 'elgg-poll-form-' . $candidate->getGUID();
+
 			$action_url = $CONFIG->wwwroot . "action/polls/vote";
-			$output .= elgg_view('input/form', array('action' => $action_url, 'body' => $form));
+			$output .= elgg_view('input/form', array('action' => $action_url, 'body' => $form, 'class' => $form_id));
+
+			// Stop multiple submissions by disabling all submit buttons
+			// when form is submittedi
+			// NB. we can't actually disable them since the value of the button
+			// wouldn't be passed to the server if we did, so we hide them, and
+			// make disabled clones of them  to keep the UI consistent.
+			// Idea from http://www.norio.be/blog/2008/09/preventing-multiple-form-submissions-revisited
+
+			$output .= '<script type="text/javascript">';
+			$output .= '$(\'.' . $form_id . '\').submit(function(){';
+				$output .= '$(\'input[type=submit]\', this).each(function(index){';
+					$output .= '$(this).clone().insertAfter($(this)).attr("disabled","true");';
+					$output .= '$(this).hide();';
+				$output .= '});';
+			$output .= '});';
+			$output .= '</script>';
 		}
 
 		$output = '<div class="voting-box">' . $output . '</div>';
