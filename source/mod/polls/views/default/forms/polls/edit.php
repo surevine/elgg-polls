@@ -32,7 +32,7 @@
 		{
 			$value = $_SESSION['forwarded_form_data'][$internal_name];
 		}
-		else if ($entity && !is_null($entity->getMetaData($internal_name)))
+		else if ($entity && !is_null($entity->$internal_name))
 		{
 			$value = $entity->$internal_name;
 		}
